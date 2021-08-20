@@ -19,11 +19,12 @@ def get_yobit_page(url):
     return req.text
 
 
-def get_pull_value(page_text):
+def get_pull_value(url):
     """ Получение данных о количестве валюты в пуле
-    :param page_text: текст кода страницы
+    :param url: ссылка
     :return: данные о пуле
     """
+    page_text = get_yobit_page(url)
     try:
         soup = BeautifulSoup(page_text, 'lxml')
         div_quotes = soup.find_all('div', class_='top_meta_mining')[1]
@@ -41,6 +42,6 @@ def get_pull_value(page_text):
 
 
 if __name__ == "__main__":
-    text = get_yobit_page(DOGE_BTC_DEFI_URL)
-    value = get_pull_value(text)
+    # text = get_yobit_page(DOGE_BTC_DEFI_URL)
+    value = get_pull_value(DOGE_BTC_DEFI_URL)
     print(value)
