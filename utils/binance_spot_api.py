@@ -11,11 +11,11 @@ BINANCE_PRIVATE_API_SPOT_URL = 'https://testnet.binance.vision'  # https://api.b
 
 
 class BinanceSpotAPI(BinanceBaseAPI):
-    def __init__(self, deal_type, currency_pair, logger_name="binance_spot_api"):
+    def __init__(self, currency_pair, logger_name="binance_spot_api"):
         super().__init__(dict_key_prefix='binance_spot', logger_name=f'{logger_name}.binance_spot_api')
 
         # тип сделки (покупка или продажа)
-        self._deal_type = deal_type
+        self._deal_type = None
         # валютная пара
         self._currency_pair = currency_pair
 
@@ -46,12 +46,7 @@ class BinanceSpotAPI(BinanceBaseAPI):
         if not isinstance(glass_req_result, dict):
             return None
 
-        if self._deal_type == "SELL":
-            glass = glass_req_result.get('bids')
-        else:
-            glass = glass_req_result.get('asks')
-
-        return glass if glass else None
+        return glass_req_result
 
     def get_satisfy_price(self):
         """ Получение удовлетворяющей цены для точной покупки или продажи
@@ -244,10 +239,6 @@ if __name__ == "__main__":
 
     # create_test_json_file()
 
-    obj = BinanceSpotAPI("BUY", "DOGEBTC")
-    glass = obj.get_binance_glass()
-    print(glass)
-
-    obj = BinanceSpotAPI("SELL", "DOGEBTC")
+    obj = BinanceSpotAPI("DOGEBTC")
     glass = obj.get_binance_glass()
     print(glass)
