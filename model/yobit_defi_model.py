@@ -24,7 +24,7 @@ class YobitDefiModel(QObject):
 
         self._logger = logging.getLogger(f'{log_name}.model')
 
-        self._is_running = True
+        self.is_running = False
 
     def _get_yobit_price(self):
         """ Получение цены свопа yobit
@@ -72,12 +72,12 @@ class YobitDefiModel(QObject):
             pass  # todo сигнал
 
     def start_checking(self):
-        self._is_running = True
-        while self._is_running:
+        self.is_running = True
+        while self.is_running:
             self._check_arbitrage()
 
     def stop_checking(self):
-        self._is_running = False
+        self.is_running = False
 
 
 if __name__ == "__main__":
