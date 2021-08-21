@@ -1,7 +1,7 @@
 import logging
 from PyQt5.QtCore import QObject
 
-from model.pull_value import get_pull_value
+from model.pull_value import YobitAPI
 from utils.binance_spot_api import BinanceSpotAPI
 from utils.constants import pairs_urls_dict
 
@@ -20,7 +20,8 @@ class YobitDefiModel(QObject):
         self.pair = pair
         self.arbitrage = arbitrage
 
-        self._binance_api_obj = BinanceSpotAPI(self.pair)
+        self._yobit_qpi_obj = YobitAPI(log_name)
+        self._binance_api_obj = BinanceSpotAPI(self.pair, log_name)
 
         self._logger = logging.getLogger(f'{log_name}.model')
 
@@ -34,10 +35,10 @@ class YobitDefiModel(QObject):
         """ Получение цены свопа yobit
         """
         try:
-            pull_qty_1, pull_qty_2 = get_pull_value(pairs_urls_dict[self.pair])
+            pull_qty_1, pull_qty_2 = self._yobit_qpi_obj.get_pull_value(pairs_urls_dict[self.pair])
             pull_price = round(pull_qty_2 / pull_qty_1, 8)
-        except Exception as e:
-            # todo обработать ошибку
+        except Exception:
+            self._logger.exception('Ошибка при получении цены свопа')
             return None
 
         return pull_price * 0.99, pull_price * 1.01
