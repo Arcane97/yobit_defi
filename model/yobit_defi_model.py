@@ -80,7 +80,8 @@ class YobitDefiModel(QObject):
         self.binance_sell_price_sig.emit(binance_sell_price)
 
         yobit_buy_arbitrage = 100 * (binance_sell_price - yobit_buy_price) / yobit_buy_price
-        self._logger.info(f'Yobit buy: {yobit_buy_price} Binance sell: {binance_sell_price} Арбитраж: {yobit_buy_arbitrage}')
+        self._logger.info(f'Yobit buy: {yobit_buy_price:.8f} Binance sell: {binance_sell_price:.8f} '
+                          f'Арбитраж: {yobit_buy_arbitrage:.3f}')
         self.yobit_buy_arbitrage_sig.emit(yobit_buy_arbitrage)
 
         if yobit_buy_arbitrage >= self.arbitrage:
@@ -89,7 +90,8 @@ class YobitDefiModel(QObject):
             self.done_yobit_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на yobit, продавайте на binance')
 
         binance_buy_arbitrage = 100 * (yobit_sell_price - binance_buy_price) / yobit_sell_price
-        self._logger.info(f'Binance buy: {binance_buy_price} Yobit sell: {yobit_sell_price} Арбитраж: {binance_buy_arbitrage}')
+        self._logger.info(f'Binance buy: {binance_buy_price:.8f} Yobit sell: {yobit_sell_price:.8f} '
+                          f'Арбитраж: {binance_buy_arbitrage:.3f}')
         self.binance_buy_arbitrage_sig.emit(binance_buy_arbitrage)
 
         if binance_buy_arbitrage >= self.arbitrage:
