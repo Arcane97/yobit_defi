@@ -17,6 +17,8 @@ class YobitDefiView(QMainWindow):
         self._controller = controller
         self._model = model
 
+        self.msg_box = None
+
         self._load_params()
         self._connect_signals()
 
