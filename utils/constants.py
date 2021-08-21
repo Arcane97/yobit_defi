@@ -1,3 +1,9 @@
+from definitions import ROOT_DIR
+
+
+SETTINGS_FILE_NAME = ROOT_DIR + "\\yobit_defi_settings.json"
+LOG_FILE_NAME = ROOT_DIR + "\\yobit_defi_log.log"
+
 DOGE_BTC_DEFI_URL = "https://yobit.net/ru/defi/DOGE/BTC"
 ETH_BTC_DEFI_URL = "https://yobit.net/ru/defi/ETH/BTC"
 TRX_BTC_DEFI_URL = "https://yobit.net/ru/defi/TRX/BTC"

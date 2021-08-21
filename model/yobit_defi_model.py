@@ -1,3 +1,4 @@
+import logging
 from PyQt5.QtCore import QObject
 
 from model.pull_value import get_pull_value
@@ -9,7 +10,7 @@ class YobitDefiModel(QObject):
     """ Класс модели
     Проверяем свопы yobit и спотовый binance на арбитраж
     """
-    def __init__(self, pair, arbitrage):
+    def __init__(self, pair, arbitrage, log_name="yobit_defi"):
         """
         :param pair: пара
         :param arbitrage: разница с binance в процентах
@@ -20,6 +21,8 @@ class YobitDefiModel(QObject):
         self._arbitrage = arbitrage
 
         self._binance_api_obj = BinanceSpotAPI(pair)
+
+        self._logger = logging.getLogger(f'{log_name}.model')
 
         self._is_running = True
 
