@@ -33,8 +33,12 @@ class YobitDefiView(QMainWindow):
         self.ui.arbitrage_ledit.editingFinished.connect(self._controller.set_arbitrage)
 
     def _working_btn_clicked(self):
-        print(self._model.pair)
-        print(self._model.arbitrage)
+        if self._model.is_running:
+            self._controller.stop_thread()
+            self.ui.working_btn.setText('Старт')
+        else:
+            self._controller.start_thread()
+            self.ui.working_btn.setText('Стоп')
 
 
 if __name__ == "__main__":

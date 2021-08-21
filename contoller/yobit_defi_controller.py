@@ -1,5 +1,7 @@
 import logging
 
+from PyQt5 import QtCore
+
 from view.yobit_defi_view import YobitDefiView
 
 
@@ -10,6 +12,11 @@ class YobitDefiController:
         self._model = model
 
         self._view = YobitDefiView(self, model, log_name)
+
+        # отдельный поток
+        self._yobit_defi_thread = QtCore.QThread()
+        self._model.moveToThread(self._yobit_defi_thread)
+        self._yobit_defi_thread.started.connect(self._model.start_checking)
 
         self._view.show()
 
@@ -30,3 +37,11 @@ class YobitDefiController:
             self._logger.error('Введите арбитраж числом')
         else:
             self._logger.info(f'В программу введен арбитраж: {arbitrage}')
+
+    def start_thread(self):
+        self._yobit_defi_thread.start()
+
+    def stop_thread(self):
+        if self._yobit_defi_thread.isRunning():
+            self._model.stop_checking()
+            self._yobit_defi_thread.quit()
