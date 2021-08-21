@@ -17,8 +17,8 @@ class YobitDefiModel(QObject):
         """
         super().__init__()
 
-        self._pair = pair
-        self._arbitrage = arbitrage
+        self.pair = pair
+        self.arbitrage = arbitrage
 
         self._binance_api_obj = BinanceSpotAPI(pair)
 
@@ -30,7 +30,7 @@ class YobitDefiModel(QObject):
         """ Получение цены свопа yobit
         """
         try:
-            pull_qty_1, pull_qty_2 = get_pull_value(pairs_urls_dict[self._pair])
+            pull_qty_1, pull_qty_2 = get_pull_value(pairs_urls_dict[self.pair])
             pull_price = round(pull_qty_2 / pull_qty_1, 8)
         except Exception as e:
             # todo обработать ошибку
@@ -61,13 +61,13 @@ class YobitDefiModel(QObject):
 
         yobit_buy_arbitrage = 100 * (binance_sell_price - yobit_buy_price) / yobit_buy_price
         print('yobit_buy_arbitrage', yobit_buy_arbitrage)  # todo вывод в лог
-        if yobit_buy_arbitrage >= self._arbitrage:
+        if yobit_buy_arbitrage >= self.arbitrage:
             # покупайте на yobit продавайте на binance
             pass  # todo сигнал
 
         binance_buy_arbitrage = 100 * (yobit_sell_price - binance_buy_price) / yobit_sell_price
         print('binance_buy_arbitrage', binance_buy_arbitrage)  # todo вывод в лог
-        if binance_buy_arbitrage >= self._arbitrage:
+        if binance_buy_arbitrage >= self.arbitrage:
             # покупайте на binance продавайте на yobit
             pass  # todo сигнал
 
