@@ -20,11 +20,15 @@ class YobitDefiModel(QObject):
         self.pair = pair
         self.arbitrage = arbitrage
 
-        self._binance_api_obj = BinanceSpotAPI(pair)
+        self._binance_api_obj = BinanceSpotAPI(self.pair)
 
         self._logger = logging.getLogger(f'{log_name}.model')
 
         self.is_running = False
+
+    def set_pair(self, pair):
+        self.pair = pair
+        self._binance_api_obj.set_pair(self.pair)
 
     def _get_yobit_price(self):
         """ Получение цены свопа yobit

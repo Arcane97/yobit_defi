@@ -26,6 +26,9 @@ class BinanceSpotAPI(BinanceBaseAPI):
 
         self._logger = logging.getLogger(f'{logger_name}.binance_spot_api')
 
+    def set_pair(self, pair):
+        self._currency_pair = pair
+
     def get_average_price(self):
         """ Получение средней цены за 5 минут
         """

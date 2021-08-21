@@ -16,7 +16,7 @@ class YobitDefiController:
     def set_pair(self):
         try:
             pair = self._view.ui.pair_cmbox.currentText()
-            self._model.pair = pair
+            self._model.set_pair(pair)
         except Exception:
             self._logger.exception('Ошибка при попытке считать комбобокс с парами')
         else:
