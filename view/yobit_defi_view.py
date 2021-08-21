@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
-from yobit_defi_view_ui import Ui_MainWindow
+from view.yobit_defi_view_ui import Ui_MainWindow
 
 
 class YobitDefiView(QMainWindow):
