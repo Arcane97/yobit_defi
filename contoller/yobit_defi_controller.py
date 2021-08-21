@@ -18,7 +18,18 @@ class YobitDefiController:
         self._model.moveToThread(self._yobit_defi_thread)
         self._yobit_defi_thread.started.connect(self._model.start_checking)
 
+        self._connect_model_signals()
         self._view.show()
+
+    def _connect_model_signals(self):
+        self._model.yobit_buy_price_sig.connect(self._change_yobit_buy_lbl)
+        self._model.yobit_sell_price_sig.connect(self._change_yobit_sell_lbl)
+        self._model.binance_buy_price_sig.connect(self._change_binance_buy_lbl)
+        self._model.binance_sell_price_sig.connect(self._change_binance_sell_lbl)
+        self._model.yobit_buy_arbitrage_sig.connect(self._change_yobit_buy_arbitrage_lbl)
+        self._model.binance_buy_arbitrage_sig.connect(self._change_binance_buy_arbitrage_lbl)
+        self._model.done_yobit_buy_arbitrage_sig.connect(self._show_msg)
+        self._model.done_binance_buy_arbitrage_sig.connect(self._show_msg)
 
     def set_pair(self):
         try:
@@ -45,3 +56,24 @@ class YobitDefiController:
         if self._yobit_defi_thread.isRunning():
             self._model.stop_checking()
             self._yobit_defi_thread.quit()
+
+    def _change_yobit_buy_lbl(self, value):
+        self._view.ui.yobit_buy_lbl.setText('%.8f' % value)
+
+    def _change_yobit_sell_lbl(self, value):
+        self._view.ui.yobit_sell_lbl.setText('%.8f' % value)
+
+    def _change_binance_buy_lbl(self, value):
+        self._view.ui.binance_buy_lbl.setText('%.8f' % value)
+
+    def _change_binance_sell_lbl(self, value):
+        self._view.ui.binance_sell_lbl.setText('%.8f' % value)
+
+    def _change_yobit_buy_arbitrage_lbl(self, value):
+        self._view.ui.yobit_buy_arbitrage_lbl.setText('%.3f' % value)
+
+    def _change_binance_buy_arbitrage_lbl(self, value):
+        self._view.ui.binance_buy_arbitrage_lbl.setText('%.3f' % value)
+
+    def _show_msg(self, msg):
+        print(msg)

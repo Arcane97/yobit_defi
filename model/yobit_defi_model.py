@@ -1,5 +1,5 @@
 import logging
-from PyQt5.QtCore import QObject
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from model.pull_value import YobitAPI
 from utils.binance_spot_api import BinanceSpotAPI
@@ -10,6 +10,15 @@ class YobitDefiModel(QObject):
     """ Класс модели
     Проверяем свопы yobit и спотовый binance на арбитраж
     """
+    yobit_buy_price_sig = pyqtSignal(float)
+    yobit_sell_price_sig = pyqtSignal(float)
+    binance_buy_price_sig = pyqtSignal(float)
+    binance_sell_price_sig = pyqtSignal(float)
+    yobit_buy_arbitrage_sig = pyqtSignal(float)
+    binance_buy_arbitrage_sig = pyqtSignal(float)
+    done_yobit_buy_arbitrage_sig = pyqtSignal(str)
+    done_binance_buy_arbitrage_sig = pyqtSignal(str)
+
     def __init__(self, pair, arbitrage, log_name="yobit_defi"):
         """
         :param pair: пара
@@ -65,22 +74,28 @@ class YobitDefiModel(QObject):
             binance_buy_price, binance_sell_price = self._get_binance_price()
         except:
             return
+        self.yobit_buy_price_sig.emit(yobit_buy_price)
+        self.yobit_sell_price_sig.emit(yobit_sell_price)
+        self.binance_buy_price_sig.emit(binance_buy_price)
+        self.binance_sell_price_sig.emit(binance_sell_price)
 
         yobit_buy_arbitrage = 100 * (binance_sell_price - yobit_buy_price) / yobit_buy_price
         self._logger.info(f'Yobit buy: {yobit_buy_price} Binance sell: {binance_sell_price} Арбитраж: {yobit_buy_arbitrage}')
+        self.yobit_buy_arbitrage_sig.emit(yobit_buy_arbitrage)
 
-        # todo sig
         if yobit_buy_arbitrage >= self.arbitrage:
             # покупайте на yobit продавайте на binance
-            pass  # todo сигнал
+            self._logger.info('Арбитраж достугнут. Покупайте на yobit, продавайте на binance')
+            self.done_yobit_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на yobit, продавайте на binance')
 
         binance_buy_arbitrage = 100 * (yobit_sell_price - binance_buy_price) / yobit_sell_price
         self._logger.info(f'Binance buy: {binance_buy_price} Yobit sell: {yobit_sell_price} Арбитраж: {binance_buy_arbitrage}')
+        self.binance_buy_arbitrage_sig.emit(binance_buy_arbitrage)
 
-        # print('binance_buy_arbitrage', binance_buy_arbitrage)  # todo sig
         if binance_buy_arbitrage >= self.arbitrage:
             # покупайте на binance продавайте на yobit
-            pass  # todo сигнал
+            self._logger.info('Арбитраж достугнут. Покупайте на binance, продавайте на yobit')
+            self.done_binance_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на binance, продавайте на yobit')
 
     def start_checking(self):
         self.is_running = True
