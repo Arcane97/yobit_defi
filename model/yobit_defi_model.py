@@ -50,9 +50,8 @@ class YobitDefiModel(QObject):
         try:
             buy_price = float(binance_glass.get("bids")[0][0])
             sell_price = float(binance_glass.get("asks")[0][0])
-        except Exception as e:
-            # todo обработать ошибку
-            print(e)
+        except Exception:
+            self._logger.exception('Ошибка при получении цен из стакана')
             return None
 
         return buy_price, sell_price
@@ -61,27 +60,36 @@ class YobitDefiModel(QObject):
         """ Проверка арбитража
         """
         # 100 * (binance_price - self.main_price) / self.main_price
-        yobit_buy_price, yobit_sell_price = self._get_yobit_price()
-        binance_buy_price, binance_sell_price = self._get_binance_price()
+        try:
+            yobit_buy_price, yobit_sell_price = self._get_yobit_price()
+            binance_buy_price, binance_sell_price = self._get_binance_price()
+        except:
+            return
 
         yobit_buy_arbitrage = 100 * (binance_sell_price - yobit_buy_price) / yobit_buy_price
-        print('yobit_buy_arbitrage', yobit_buy_arbitrage)  # todo вывод в лог
+        self._logger.info(f'Yobit buy: {yobit_buy_price} Binance sell: {binance_sell_price} Арбитраж: {yobit_buy_arbitrage}')
+
+        # todo sig
         if yobit_buy_arbitrage >= self.arbitrage:
             # покупайте на yobit продавайте на binance
             pass  # todo сигнал
 
         binance_buy_arbitrage = 100 * (yobit_sell_price - binance_buy_price) / yobit_sell_price
-        print('binance_buy_arbitrage', binance_buy_arbitrage)  # todo вывод в лог
+        self._logger.info(f'Binance buy: {binance_buy_price} Yobit sell: {yobit_sell_price} Арбитраж: {binance_buy_arbitrage}')
+
+        # print('binance_buy_arbitrage', binance_buy_arbitrage)  # todo sig
         if binance_buy_arbitrage >= self.arbitrage:
             # покупайте на binance продавайте на yobit
             pass  # todo сигнал
 
     def start_checking(self):
         self.is_running = True
+        self._logger.info('Старт')
         while self.is_running:
             self._check_arbitrage()
 
     def stop_checking(self):
+        self._logger.info('Стоп')
         self.is_running = False
 
 
