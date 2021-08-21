@@ -50,7 +50,7 @@ class YobitDefiModel(QObject):
             self._logger.exception('Ошибка при получении цены свопа')
             return None
 
-        return pull_price * 0.99, pull_price * 1.01
+        return pull_price * 1.01, pull_price * 0.99
 
     def _get_binance_price(self):
         """ Получение цены на спотовом рынке binance

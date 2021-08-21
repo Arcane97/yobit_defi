@@ -1,4 +1,4 @@
-from definitions import ROOT_DIR
+from definitions import ROOT_DIR  # todo баг с файлом в сборке
 
 
 SETTINGS_FILE_NAME = ROOT_DIR + "\\yobit_defi_settings.json"

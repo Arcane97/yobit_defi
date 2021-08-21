@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import QApplication
 
 from contoller.yobit_defi_controller import YobitDefiController
 from model.yobit_defi_model import YobitDefiModel
-from utils.constants import LOG_FILE_NAME
+# from utils.constants import LOG_FILE_NAME
+LOG_FILE_NAME = "./yobit_defi_log.log"
 
 
 def create_log(log_name):
