@@ -81,6 +81,7 @@ class YobitDefiView(QMainWindow):
 
     def closeEvent(self, e):
         self._controller.save_params()
+        self._controller.terminate_threads()
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@ class YobitDefiController:
         self._sound_thread = QtCore.QThread()
 
         # время звучания будильника
-        sounding_time = 2  # float(self.ui.time_alarm_ledit.text())
+        sounding_time = 10  # float(self.ui.time_alarm_ledit.text())
 
         # объект звука в потоке
         self._sound_thread_obj = SoundAlarm(sounding_time)
@@ -135,6 +135,10 @@ class YobitDefiController:
             self._model.stop_checking()
             self._yobit_defi_thread.quit()
 
+        if self._sound_thread.isRunning():
+            self._sound_thread_obj.stop_alarm()
+            self._sound_thread.quit()
+
     def _change_yobit_buy_lbl(self, value):
         self._view.ui.yobit_buy_lbl.setText('%.8f' % value)
 
@@ -187,3 +191,10 @@ class YobitDefiController:
                     'proxy': proxy_url}
 
             json.dump(data, file)
+
+    def terminate_threads(self):
+        if self._yobit_defi_thread.isRunning():
+            self._yobit_defi_thread.terminate()
+
+        if self._sound_thread.isRunning():
+            self._sound_thread.terminate()
