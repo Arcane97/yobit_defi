@@ -21,8 +21,15 @@ class YobitDefiController:
 
         # отдельный поток для звука
         self._sound_thread = QtCore.QThread()
+
+        # время звучания будильника  # todo добавить в модель
+        sounding_time = 2  # float(self.ui.time_alarm_ledit.text())
+
         # объект звука в потоке
-        self._sound_thread_obj = None
+        self._sound_thread_obj = SoundAlarm(sounding_time)
+        # пересылаем в отдеьный поток
+        self._sound_thread_obj.moveToThread(self._sound_thread)
+        self._sound_thread.started.connect(self._sound_thread_obj.start_alarm)
 
         self._connect_model_signals()
         self._view.show()
@@ -83,25 +90,15 @@ class YobitDefiController:
 
     def _show_msg(self, msg):
         try:
-            if self._view.msg_box is not None:  # todo баг если арбитраж достигнут и не прекращается, программу не остановить
-                return
-            # запускаем
-            # если запущен, останавливаем
+            # запускаем, если запущен, останавливаем
             if self._sound_thread.isRunning():
-                self._sound_thread_obj = None
+                # self._sound_thread_obj = None
                 self._sound_thread.quit()
-                if not self._sound_thread.wait(5000):
-                    self._sound_thread.terminate()
-
-            # время звучания будильника
-            sounding_time = 10  # float(self.ui.time_alarm_ledit.text())
-            # объект
-            self._sound_thread_obj = SoundAlarm(sounding_time)
-            # пересылаем в отдеьный поток
-            self._sound_thread_obj.moveToThread(self._sound_thread)
-            self._sound_thread.started.connect(self._sound_thread_obj.start_alarm)
 
             self._sound_thread.start()
+
+            if self._view.msg_box is not None:  # todo баг если арбитраж достигнут и не прекращается, программу не остановить
+                return
 
             if self._view.msg_box is not None:
                 self._view.msg_box.close()
@@ -113,13 +110,9 @@ class YobitDefiController:
                 self._view.msg_box = None
                 if self._sound_thread_obj is not None:
                     self._sound_thread_obj.stop_alarm()
+                    self._sound_thread.quit()
 
             self._view.msg_box = None
-            if self._sound_thread_obj is not None:
-                self._sound_thread_obj.stop_alarm()
-            self._sound_thread_obj = None
-            self._sound_thread.quit()
-            if not self._sound_thread.wait(5000):
-                self._sound_thread.terminate()
+
         except:
             self._logger.exception('При воиспроизведении звука вознилка ошибка')
