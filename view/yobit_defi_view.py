@@ -31,6 +31,8 @@ class YobitDefiView(QMainWindow):
 
         arbitrage = str(2)
         self.ui.arbitrage_ledit.setText(arbitrage)
+        sleep_time = str(0.0)
+        self.ui.sleep_time_ledit.setText(sleep_time)
 
     def _create_log(self, log_name):
         main_logger = logging.getLogger(log_name)
@@ -45,6 +47,7 @@ class YobitDefiView(QMainWindow):
         self.ui.working_btn.clicked.connect(self._working_btn_clicked)
         self.ui.pair_cmbox.currentTextChanged.connect(self._controller.set_pair)
         self.ui.arbitrage_ledit.editingFinished.connect(self._controller.set_arbitrage)
+        self.ui.sleep_time_ledit.editingFinished.connect(self._controller.set_sleep_time)
 
     def _working_btn_clicked(self):
         if self._model.is_running:

@@ -1,4 +1,5 @@
 import logging
+import time
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from model.pull_value import YobitAPI
@@ -20,7 +21,7 @@ class YobitDefiModel(QObject):
     done_binance_buy_arbitrage_sig = pyqtSignal(str, int)
     no_arbitrage_sig = pyqtSignal(str, int)
 
-    def __init__(self, pair, arbitrage, log_name="yobit_defi"):
+    def __init__(self, pair, arbitrage, sleep_time=0.0, log_name="yobit_defi"):
         """
         :param pair: пара
         :param arbitrage: разница с binance в процентах
@@ -29,6 +30,7 @@ class YobitDefiModel(QObject):
 
         self.pair = pair
         self.arbitrage = arbitrage
+        self.sleep_time = sleep_time
 
         self._yobit_qpi_obj = YobitAPI(log_name)
         self._binance_api_obj = BinanceSpotAPI(self.pair, log_name)
@@ -109,6 +111,7 @@ class YobitDefiModel(QObject):
         self._logger.info('Старт')
         while self.is_running:
             self._check_arbitrage()
+            time.sleep(self.sleep_time)
 
     def stop_checking(self):
         self._logger.info('Стоп')

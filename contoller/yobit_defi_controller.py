@@ -22,7 +22,7 @@ class YobitDefiController:
         # отдельный поток для звука
         self._sound_thread = QtCore.QThread()
 
-        # время звучания будильника  # todo добавить в модель
+        # время звучания будильника
         sounding_time = 2  # float(self.ui.time_alarm_ledit.text())
 
         # объект звука в потоке
@@ -63,7 +63,19 @@ class YobitDefiController:
         else:
             self._logger.info(f'В программу введен арбитраж: {arbitrage}')
 
+    def set_sleep_time(self):
+        try:
+            sleep_time = float(self._view.ui.sleep_time_ledit.text())
+            self._model.sleep_time = sleep_time
+        except:
+            self._logger.error('Введите время задержки числом')
+        else:
+            self._logger.info(f'В программу введено время задержки: {sleep_time}')
+
     def start_thread(self):
+        self.set_pair()
+        self.set_arbitrage()
+        self.set_sleep_time()
         self._yobit_defi_thread.start()
 
     def stop_thread(self):

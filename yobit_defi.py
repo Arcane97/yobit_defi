@@ -26,7 +26,7 @@ def main():
     create_log(log_name)
     app = QApplication(sys.argv)
 
-    model = YobitDefiModel("DOGEBTC", 2, log_name)
+    model = YobitDefiModel("DOGEBTC", 2, 0.0, log_name)
 
     controller = YobitDefiController(model, "yobit_defi")
 
