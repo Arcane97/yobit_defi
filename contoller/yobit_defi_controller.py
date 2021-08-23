@@ -72,10 +72,28 @@ class YobitDefiController:
         else:
             self._logger.info(f'В программу введено время задержки: {sleep_time}')
 
+    def set_proxy(self):
+        try:
+            use_proxy = self._view.ui.proxy_chbox.isChecked()
+            proxy_url = self._view.ui.proxy_ledit.text()
+            proxy = {"https": f"https://{proxy_url}"}
+            if use_proxy:
+                self._model.set_proxy(proxy)
+            else:
+                self._model.set_proxy(None)
+        except:
+            self._logger.exception('Ошибка при вводе прокси')
+        else:
+            if use_proxy:
+                self._logger.info(f'Будет использоваться прокси {proxy_url}')
+            else:
+                self._logger.info('Прокси не будет использоваться')
+
     def start_thread(self):
         self.set_pair()
         self.set_arbitrage()
         self.set_sleep_time()
+        self.set_proxy()
         self._yobit_defi_thread.start()
 
     def stop_thread(self):

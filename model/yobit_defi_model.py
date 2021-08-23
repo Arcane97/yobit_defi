@@ -21,7 +21,7 @@ class YobitDefiModel(QObject):
     done_binance_buy_arbitrage_sig = pyqtSignal(str, int)
     no_arbitrage_sig = pyqtSignal(str, int)
 
-    def __init__(self, pair, arbitrage, sleep_time=0.0, log_name="yobit_defi"):
+    def __init__(self, pair, arbitrage, sleep_time=0.0, proxy=None, log_name="yobit_defi"):
         """
         :param pair: пара
         :param arbitrage: разница с binance в процентах
@@ -32,7 +32,9 @@ class YobitDefiModel(QObject):
         self.arbitrage = arbitrage
         self.sleep_time = sleep_time
 
-        self._yobit_qpi_obj = YobitAPI(log_name)
+        self.proxy = proxy
+
+        self._yobit_api_obj = YobitAPI(self.proxy, log_name)
         self._binance_api_obj = BinanceSpotAPI(self.pair, log_name)
 
         self._logger = logging.getLogger(f'{log_name}.model')
@@ -43,11 +45,15 @@ class YobitDefiModel(QObject):
         self.pair = pair
         self._binance_api_obj.set_pair(self.pair)
 
+    def set_proxy(self, proxy):
+        self.proxy = proxy
+        self._yobit_api_obj.set_proxy(self.proxy)
+
     def _get_yobit_price(self):
         """ Получение цены свопа yobit
         """
         try:
-            pull_qty_1, pull_qty_2 = self._yobit_qpi_obj.get_pull_value(pairs_urls_dict[self.pair])
+            pull_qty_1, pull_qty_2 = self._yobit_api_obj.get_pull_value(pairs_urls_dict[self.pair])
             pull_price = round(pull_qty_2 / pull_qty_1, 8)
         except Exception:
             self._logger.exception('Ошибка при получении цены свопа')

@@ -2,12 +2,14 @@ from bs4 import BeautifulSoup
 import logging
 import requests
 
-from utils.constants import DOGE_BTC_DEFI_URL
-
 
 class YobitAPI:
-    def __init__(self, log_name="yobit_defi"):
+    def __init__(self, proxy=None, log_name="yobit_defi"):
+        self.proxy = proxy
         self._logger = logging.getLogger(f'{log_name}.yobit_api')
+
+    def set_proxy(self, proxy):
+        self.proxy = proxy
 
     def get_yobit_page(self, url):
         """ Получение страницы yobit
@@ -15,7 +17,7 @@ class YobitAPI:
         :return: код страницы
         """
         try:
-            req = requests.get(url)
+            req = requests.get(url, proxies=self.proxy)
         except Exception:
             self._logger.exception(f'При получении страницы yobit возникла ошибка. URL: {url}')
             return None
