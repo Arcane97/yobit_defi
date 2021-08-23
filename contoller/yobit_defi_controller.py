@@ -167,7 +167,17 @@ class YobitDefiController:
                 self._sound_thread.quit()
 
             if msg_type != 0:
+                sounding_time = 10
+                # объект звука в потоке
+                self._sound_thread_obj = SoundAlarm(sounding_time)
+                # пересылаем в отдеьный поток
+                self._sound_thread_obj.moveToThread(self._sound_thread)
+                self._sound_thread.started.connect(self._sound_thread_obj.start_alarm)
                 self._sound_thread.start()
+            else:
+                if self._sound_thread.isRunning():
+                    self._sound_thread_obj.stop_alarm()
+                    self._sound_thread.quit()
 
         except:
             self._logger.exception('При воиспроизведении звука вознилка ошибка')
