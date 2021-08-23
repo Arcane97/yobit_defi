@@ -43,6 +43,7 @@ class YobitDefiController:
         self._model.binance_buy_arbitrage_sig.connect(self._change_binance_buy_arbitrage_lbl)
         self._model.done_yobit_buy_arbitrage_sig.connect(self._show_msg)
         self._model.done_binance_buy_arbitrage_sig.connect(self._show_msg)
+        self._model.no_arbitrage_sig.connect(self._show_msg)
 
     def set_pair(self):
         try:
@@ -88,31 +89,17 @@ class YobitDefiController:
     def _change_binance_buy_arbitrage_lbl(self, value):
         self._view.ui.binance_buy_arbitrage_lbl.setText('%.3f' % value)
 
-    def _show_msg(self, msg):
+    def _show_msg(self, msg, msg_type):
         try:
+            self._view.ui.state_lbl.setText(msg)
+
             # запускаем, если запущен, останавливаем
             if self._sound_thread.isRunning():
                 # self._sound_thread_obj = None
                 self._sound_thread.quit()
 
-            self._sound_thread.start()
-
-            if self._view.msg_box is not None:  # todo баг если арбитраж достигнут и не прекращается, программу не остановить
-                return
-
-            if self._view.msg_box is not None:
-                self._view.msg_box.close()
-                self._view.msg_box = None
-            self._view.msg_box = QtWidgets.QMessageBox(self._view)
-            self._view.msg_box.setWindowTitle('Внимание!')
-            self._view.msg_box.setText(msg)
-            if self._view.msg_box.exec_():
-                self._view.msg_box = None
-                if self._sound_thread_obj is not None:
-                    self._sound_thread_obj.stop_alarm()
-                    self._sound_thread.quit()
-
-            self._view.msg_box = None
+            if msg_type != 0:
+                self._sound_thread.start()
 
         except:
             self._logger.exception('При воиспроизведении звука вознилка ошибка')

@@ -16,8 +16,9 @@ class YobitDefiModel(QObject):
     binance_sell_price_sig = pyqtSignal(float)
     yobit_buy_arbitrage_sig = pyqtSignal(float)
     binance_buy_arbitrage_sig = pyqtSignal(float)
-    done_yobit_buy_arbitrage_sig = pyqtSignal(str)
-    done_binance_buy_arbitrage_sig = pyqtSignal(str)
+    done_yobit_buy_arbitrage_sig = pyqtSignal(str, int)
+    done_binance_buy_arbitrage_sig = pyqtSignal(str, int)
+    no_arbitrage_sig = pyqtSignal(str, int)
 
     def __init__(self, pair, arbitrage, log_name="yobit_defi"):
         """
@@ -87,7 +88,8 @@ class YobitDefiModel(QObject):
         if yobit_buy_arbitrage >= self.arbitrage:
             # покупайте на yobit продавайте на binance
             self._logger.info('Арбитраж достугнут. Покупайте на yobit, продавайте на binance')
-            self.done_yobit_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на yobit, продавайте на binance')
+            self.done_yobit_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на yobit, продавайте на binance', 1)
+            return
 
         binance_buy_arbitrage = 100 * (yobit_sell_price - binance_buy_price) / yobit_sell_price
         self._logger.info(f'Binance buy: {binance_buy_price:.8f} Yobit sell: {yobit_sell_price:.8f} '
@@ -97,7 +99,10 @@ class YobitDefiModel(QObject):
         if binance_buy_arbitrage >= self.arbitrage:
             # покупайте на binance продавайте на yobit
             self._logger.info('Арбитраж достугнут. Покупайте на binance, продавайте на yobit')
-            self.done_binance_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на binance, продавайте на yobit')
+            self.done_binance_buy_arbitrage_sig.emit('Арбитраж достугнут. Покупайте на binance, продавайте на yobit', 1)
+            return
+
+        self.no_arbitrage_sig.emit('Нет удовлетворяющего арбитража', 0)
 
     def start_checking(self):
         self.is_running = True
