@@ -129,6 +129,7 @@ class YobitDefiController:
     def start_thread(self):
         self._set_param_model()
         self._yobit_defi_thread.start()
+        self._view.ui.state_lbl.setText('Программа запущена, если это сообщение долго находится, перезапустите программу')
 
     def stop_thread(self):
         if self._yobit_defi_thread.isRunning():
@@ -138,6 +139,8 @@ class YobitDefiController:
         if self._sound_thread.isRunning():
             self._sound_thread_obj.stop_alarm()
             self._sound_thread.quit()
+
+        self._view.ui.state_lbl.setText('Программа остановлена')
 
     def _change_yobit_buy_lbl(self, value):
         self._view.ui.yobit_buy_lbl.setText('%.8f' % value)
