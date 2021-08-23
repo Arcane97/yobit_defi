@@ -1,8 +1,11 @@
+import json
 import logging
+import os
 
 from PyQt5 import QtCore, QtWidgets
 
 from view.yobit_defi_view import YobitDefiView
+from utils.constants import SETTINGS_FILE_NAME
 from utils.sound_alarm import SoundAlarm
 
 
@@ -33,6 +36,34 @@ class YobitDefiController:
 
         self._connect_model_signals()
         self._view.show()
+        self._load_params()
+
+    def _load_params(self):
+        if not os.path.exists(SETTINGS_FILE_NAME):
+            with open(SETTINGS_FILE_NAME, "w") as file:
+                data = {'pair': 'DOGEBTC',
+                        'arbitrage': 1.0,
+                        'sleep_time': 0.0,
+                        'use_proxy': 0,
+                        'proxy': 'TSFqkt:FN6vY4@194.67.198.89:8000'}
+
+                json.dump(data, file)
+
+        with open(SETTINGS_FILE_NAME, "r") as file:
+            settings_data = json.load(file)
+            if isinstance(settings_data, dict):
+                pair = settings_data.get('pair')
+                arbitrage = settings_data.get('arbitrage')
+                sleep_time = settings_data.get('sleep_time')
+                use_proxy = settings_data.get('use_proxy')
+                proxy = settings_data.get('proxy')
+                self._view.load_params(pair, arbitrage, sleep_time, use_proxy, proxy)
+                self._set_param_model()
+            else:
+                # error кривой json файл
+                self._logger.error(f'Кривой файл настроек. Удалите его: {SETTINGS_FILE_NAME}')
+                self._view.load_params('DOGEBTC', 1.0, 0.0, 0, 'TSFqkt:FN6vY4@194.67.198.89:8000')
+                self._set_param_model()
 
     def _connect_model_signals(self):
         self._model.yobit_buy_price_sig.connect(self._change_yobit_buy_lbl)
@@ -89,11 +120,14 @@ class YobitDefiController:
             else:
                 self._logger.info('Прокси не будет использоваться')
 
-    def start_thread(self):
+    def _set_param_model(self):
         self.set_pair()
         self.set_arbitrage()
         self.set_sleep_time()
         self.set_proxy()
+
+    def start_thread(self):
+        self._set_param_model()
         self._yobit_defi_thread.start()
 
     def stop_thread(self):
@@ -133,3 +167,23 @@ class YobitDefiController:
 
         except:
             self._logger.exception('При воиспроизведении звука вознилка ошибка')
+
+    def save_params(self):
+        pair = self._view.ui.pair_cmbox.currentText()
+        arbitrage = float(self._view.ui.arbitrage_ledit.text())
+        sleep_time = float(self._view.ui.sleep_time_ledit.text())
+        proxy_chbox = self._view.ui.proxy_chbox.isChecked()
+        if proxy_chbox:
+            use_proxy = 1
+        else:
+            use_proxy = 0
+        proxy_url = self._view.ui.proxy_ledit.text()
+
+        with open(SETTINGS_FILE_NAME, "w") as file:
+            data = {'pair': pair,
+                    'arbitrage': arbitrage,
+                    'sleep_time': sleep_time,
+                    'use_proxy': use_proxy,
+                    'proxy': proxy_url}
+
+            json.dump(data, file)

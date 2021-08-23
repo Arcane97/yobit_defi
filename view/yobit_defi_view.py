@@ -1,5 +1,6 @@
 import logging
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow
 
 from view.yobit_defi_view_ui import Ui_MainWindow
@@ -22,18 +23,7 @@ class YobitDefiView(QMainWindow):
 
         self._create_log(log_name)
 
-        self._load_params()
         self._connect_signals()
-
-    def _load_params(self):
-        for pair in pairs_urls_dict.keys():
-            self.ui.pair_cmbox.addItem(pair)
-
-        arbitrage = str(2)
-        self.ui.arbitrage_ledit.setText(arbitrage)
-        sleep_time = str(0.0)
-        self.ui.sleep_time_ledit.setText(sleep_time)
-        self.ui.proxy_ledit.setText('TSFqkt:FN6vY4@194.67.198.89:8000')
 
     def _create_log(self, log_name):
         main_logger = logging.getLogger(log_name)
@@ -59,6 +49,38 @@ class YobitDefiView(QMainWindow):
         else:
             self._controller.start_thread()
             self.ui.working_btn.setText('Стоп')
+
+    def load_params(self, pair, arbitrage, sleep_time, use_proxy, proxy):
+        try:
+            for p in pairs_urls_dict.keys():
+                self.ui.pair_cmbox.addItem(p)
+            self.ui.pair_cmbox.setCurrentText(pair)
+        except:
+            self._logger.exception('При загрузке пары в интерфейс произошла ошибка')
+
+        try:
+            str_arbitrage = str(arbitrage)
+            self.ui.arbitrage_ledit.setText(str_arbitrage)
+        except:
+            self._logger.exception('При загрузке арбитража в интерфейс произошла ошибка')
+
+        try:
+            str_sleep_time = str(sleep_time)
+            self.ui.sleep_time_ledit.setText(str_sleep_time)
+        except:
+            self._logger.exception('При загрузке времени задержки в интерфейс произошла ошибка')
+
+        try:
+            if use_proxy:
+                self.ui.proxy_chbox.setChecked(True)
+            else:
+                self.ui.proxy_chbox.setChecked(False)
+            self.ui.proxy_ledit.setText(proxy)
+        except:
+            self._logger.exception('При загрузке прокси в интерфейс произошла ошибка')
+
+    def closeEvent(self, e):
+        self._controller.save_params()
 
 
 if __name__ == "__main__":
