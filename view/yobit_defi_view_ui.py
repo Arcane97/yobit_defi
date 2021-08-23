@@ -139,6 +139,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
         self.verticalLayout_5.addWidget(self.groupBox_3)
         self.verticalLayout_2.addLayout(self.verticalLayout_5)
+        self.groupBox_4 = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_4.setObjectName("groupBox_4")
+        self.verticalLayout_7 = QtWidgets.QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_7.setObjectName("verticalLayout_7")
+        self.state_lbl = QtWidgets.QLabel(self.groupBox_4)
+        self.state_lbl.setAlignment(QtCore.Qt.AlignCenter)
+        self.state_lbl.setObjectName("state_lbl")
+        self.verticalLayout_7.addWidget(self.state_lbl)
+        self.verticalLayout_2.addWidget(self.groupBox_4)
         self.horizontalLayout.addLayout(self.verticalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -174,6 +183,8 @@ class Ui_MainWindow(object):
         self.yobit_buy_arbitrage_lbl.setText(_translate("MainWindow", "TextLabel"))
         self.label_3.setText(_translate("MainWindow", "покупки на binance"))
         self.binance_buy_arbitrage_lbl.setText(_translate("MainWindow", "TextLabel"))
+        self.groupBox_4.setTitle(_translate("MainWindow", "Состояние"))
+        self.state_lbl.setText(_translate("MainWindow", "TextLabel"))
 
 
 if __name__ == "__main__":
