@@ -3,7 +3,7 @@ import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from contoller.yobit_defi_controller import YobitDefiController
+from controller.yobit_defi_controller import YobitDefiController
 from model.yobit_defi_model import YobitDefiModel
 from utils.constants import LOG_FILE_NAME
 

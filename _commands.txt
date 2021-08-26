@@ -1,4 +1,5 @@
 перевод из ui в py
 python -m PyQt5.uic.pyuic -x view/yobit_defi_view_ui.ui -o view/yobit_defi_view_ui.py
 
+сборка
 C:\Python36-32\python.exe C:\Python36-32\Scripts\pyinstaller-script.py -F -w yobit_defi.py
